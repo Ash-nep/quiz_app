@@ -27,7 +27,6 @@ void chooseAnswer(String answer) {
 
   if (selectedAnswers.length == questions.length) {
     setState(() {
-      selectedAnswers = [];
       activeScreen = 'results-screen';
     });
   }
