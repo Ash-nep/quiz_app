@@ -14,11 +14,20 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
 List<String> selectedAnswers = [];
-var activeScreen = 'start-screen';
+//var activeScreen = 'start-screen';
+Widget? activeScreen;
+
+@override
+void initState() {
+  super.initState();
+  activeScreen = StartScreen(switchScreen);
+}
 
 void switchScreen(){
   setState(() {
-    activeScreen = 'questions-screen';
+    activeScreen = QuestionsScreen(
+      onSelectAnswer: chooseAnswer,
+    );
   });
 }
 
@@ -27,28 +36,25 @@ void chooseAnswer(String answer) {
 
   if (selectedAnswers.length == questions.length) {
     setState(() {
-      activeScreen = 'results-screen';
+      activeScreen = ResultsScreen(
+        chosenAnswers: selectedAnswers,
+        onRestart: restartQuiz,
+      );
     });
   }
 }
 
+void restartQuiz() {
+  setState(() {
+    selectedAnswers = [];
+    activeScreen = QuestionsScreen(
+      onSelectAnswer: chooseAnswer,
+    );
+  });
+}
+
   @override
-  Widget build(context) {
-    Widget screenWidget = StartScreen(switchScreen);
-
-    if (activeScreen == 'questions-screen') {
-      screenWidget = QuestionsScreen(
-        onSelectAnswer: chooseAnswer
-      );
-    }
-
-    if(activeScreen == 'results-screen') {
-      screenWidget =  ResultsScreen(
-        chosenAnswers: selectedAnswers,
-      );
-    }
-
-
+  Widget build(BuildContext context) { 
     return MaterialApp(
       home: Scaffold(
         body: Container (
@@ -61,7 +67,7 @@ void chooseAnswer(String answer) {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               ) ),
-          child: screenWidget,
+          child: activeScreen,
           ),
       ),
     );
